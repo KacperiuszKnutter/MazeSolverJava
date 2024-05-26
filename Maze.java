@@ -1,44 +1,58 @@
+
+
 import javax.swing.*;
-import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Maze extends JPanel {
+public class Maze {
 
+    private MazeData mazeData;
+    private char[][] maze;
 
-    private List<mazeObserver> observers = new ArrayList<>();
-
-    public void addObserver(mazeObserver observer) {
-        observers.add(observer);
+    public Maze() {
+        mazeData = new MazeData();
     }
 
-    public void removeObserver(mazeObserver observer) {
-        observers.remove(observer);
-    }
+    public class LoadMaze extends JPanel {
 
-    private void notifyObservers() {
-        for (mazeObserver observer : observers) {
-            observer.mazeChanged();
+        private FileRead czytaczpliku;
+        private List<Observer> observers = new ArrayList<>();
+
+        public LoadMaze() {
+            // Constructor logic if needed
+        }
+
+        public void loadMaze(String selectedFile, Observer mazePanel) throws IOException {
+            addObserver(mazePanel);
+
+            try {
+                czytaczpliku = new FileRead();
+                maze = czytaczpliku.wczytajLabirynt(selectedFile);
+                mazeData.setMaze(maze);
+                mazeData.setRows(czytaczpliku.getHeight());
+                mazeData.setCols(czytaczpliku.getWidth());
+                mazeData.setCellSize(10);
+                notifyObservers();
+            } catch (IOException exception) {
+                System.out.println("Blad");
+            }
+        }
+
+        public void addObserver(Observer observer) {
+            observers.add(observer);
+        }
+
+        public void removeObserver(Observer observer) {
+            observers.remove(observer);
+        }
+
+        public void notifyObservers() {
+            for (Observer observer : observers) {
+                observer.update(mazeData);
+            }
         }
     }
-    
-    public void updateMaze(int Rows, int Cols, int AllCellSize, char [][] mazearr) {
-        this.rows = Rows;
-        this.cols = Cols;
-        this.cellSize = AllCellSize;
-        this.maze = mazearr;
-        // notifyObservers();
-    }
-    
-    public int rows = 0;
-    public int cols = 0;
-    public int cellSize;
-    public char[][] maze;
-    
-    public Maze() {
 
-    }
-
-
-    
+   
 }

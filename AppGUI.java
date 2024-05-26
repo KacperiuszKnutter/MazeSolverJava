@@ -22,15 +22,12 @@ public class AppGUI extends JFrame {
 
     final static int DEFAULTWIDTH = 1920;
     final static int DEFAULTHEIGHT = DEFAULTWIDTH - 940;
-    private int mazeRows = 0;
-    private int mazeCols = 0;
-    private int x;
-    private int y;
+
+    
     public String InputFile = "";
     public ArrayList<String> messages = new ArrayList<>();
-    private FileRead czytaczpliku;
-    private char[][] maze;
-    private int CELLSIZE = 10;
+    
+    
     private String selectedFile;
     public JButton SelectPosinMaze;
     public JButton SolveMazeButton;
@@ -51,145 +48,75 @@ public class AppGUI extends JFrame {
     private JLabel endColumnField;
     private JLabel startLabel;
     private JPanel centerPanel;
-    private MazePanel mazePanel;
-    private BufferedImage mazeImage;
+    Observers.MazePanel mazePanel;
 
+
+    //do usuniecia potem
     public int startRowValue = 0;
     public int startColValue = 0;
     public int endRowValue = 0;
     public int endColValue = 0;
-    private int clickMode = 0;
+    private int mazeRows = 0;
+    private int mazeCols = 0;
 
-    private Maze mazeData;
 
-    public void printMessageToGui() {
-        if (!messages.isEmpty()) {
-            lastMessage = messages.get(messages.size() - 1);
-        } else {
-            lastMessage = "The messages list is empty";
-        }
-        JLabel message = new JLabel(lastMessage);
-        message.setAlignmentX(Component.CENTER_ALIGNMENT);
-        message.setForeground(Color.WHITE);
-        message.setFont(smallFont);
-        message.setBorder(messagepadding);
-        mazeMessages.add(message);
-        mazeMessages.revalidate();
-        mazeMessages.repaint();
-    }
 
-    private void createMaze(int cellSize, char[][] maze) {
-        mazeData.updateMaze(czytaczpliku.getWidth(), czytaczpliku.getHeight(), cellSize, maze);
-        createMazeImage();
+    //obiekt maze zawierający wszystkie operacje dotyczące plików i rozwiązywania labiryntu
+    private Maze maze;
+    
+   
 
-        mazePanel = new MazePanel();
-        JScrollPane scrollPane = new JScrollPane(mazePanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        centerPanel.removeAll();
-        centerPanel.add(scrollPane);
-        mazeChanged();
-    }
+    // public void printMessageToGui() {
+    //     if (!messages.isEmpty()) {
+    //         lastMessage = messages.get(messages.size() - 1);
+    //     } else {
+    //         lastMessage = "The messages list is empty";
+    //     }
+    //     JLabel message = new JLabel(lastMessage);
+    //     message.setAlignmentX(Component.CENTER_ALIGNMENT);
+    //     message.setForeground(Color.WHITE);
+    //     message.setFont(smallFont);
+    //     message.setBorder(messagepadding);
+    //     mazeMessages.add(message);
+    //     mazeMessages.revalidate();
+    //     mazeMessages.repaint();
+    // }
 
-    private void createMazeImage() {
-        int imageWidth = mazeData.cols * mazeData.cellSize;
-        int imageHeight = mazeData.rows * mazeData.cellSize;
-        mazeImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
-        updateMazeImage();
-    }
 
-    private class MazePanel extends JPanel {
-        public MazePanel() {
-            System.out.println(mazeData.cols);
-            System.out.println(mazeData.rows);
-            int panelWidth = mazeData.cols * mazeData.cellSize;
-            int panelHeight = mazeData.rows * mazeData.cellSize;
-            setPreferredSize(new Dimension(panelWidth, panelHeight));
-            addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent event) {
-                    x = event.getX() / mazeData.cellSize;
-                    y = event.getY() / mazeData.cellSize;
 
-                    if (x < mazeData.cols && y < mazeData.rows) {
-                        if (mazeData.maze[y][x] == ' ' && clickMode == 1) {
-                            mazeData.maze[y][x] = 'P';
-                            clickMode = 2;
-                            startRowValue = y;
-                            startColValue = x;
-                            updateMazeImage();
-                            messages.add("Wybrano Początek x - "+ x + "  ||  y - " + y);
-                            printMessageToGui();
-                            mazeChanged();
-                        } else if (mazeData.maze[y][x] == ' ' && clickMode == 2) {
-                            mazeData.maze[y][x] = 'K';
-                            clickMode = 0;
-                            endRowValue = y;
-                            endColValue = x;
-                            updateMazeImage();
-                            messages.add("Wybrano Koniec x - "+ x + "  ||  y - " + y);
-                            printMessageToGui();
-                            mazeChanged();
-                        }
-                    }
-                }
-            });
-        }
 
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            g.drawImage(mazeImage, 0, 0, this);
-        }
-    }
+    // public void mazeChanged() {
+    //     mazePanel.revalidate();
+    //     mazePanel.repaint();
+    //     sidePanel.revalidate();
+    //     sidePanel.repaint();
+    //     refreshMazeInfo();
+    // }
 
-    private void updateMazeImage() {
-        Graphics2D g2d = mazeImage.createGraphics();
-
-        for (int i = 0; i < mazeData.maze.length; i++) {
-            for (int j = 0; j < mazeData.maze[0].length; j++) {
-                switch (mazeData.maze[i][j]) {
-                    case 'X':
-                        g2d.setColor(Color.BLACK);
-                        break;
-                    case ' ':
-                        g2d.setColor(Color.WHITE);
-                        break;
-                    case 'P':
-                        g2d.setColor(Color.ORANGE);
-                        break;
-                    case 'K':
-                        g2d.setColor(Color.RED);
-                        break;
-                    default:
-                        g2d.setColor(Color.WHITE);
-                }
-                g2d.fillRect(j * mazeData.cellSize, i * mazeData.cellSize, mazeData.cellSize, mazeData.cellSize);
-            }
-        }
-        g2d.dispose();
-    }
-
-    public void mazeChanged() {
-        mazePanel.revalidate();
-        mazePanel.repaint();
-        sidePanel.revalidate();
-        sidePanel.repaint();
-        refreshMazeInfo();
-    }
-
-    public void refreshMazeInfo() {
-        mazeRows = czytaczpliku.getHeight();
-        mazeCols = czytaczpliku.getWidth();
-        mazeprops.setText("Rows: " + mazeRows + " Cols: " + mazeCols);
-        startRowField.setText(Integer.toString(startRowValue));
-        startColumnField.setText(Integer.toString(startColValue));
-        endRowField.setText(Integer.toString(endRowValue));
-        endColumnField.setText(Integer.toString(endColValue));
-        mazeInfo.revalidate();
-        mazeInfo.repaint();
-    }
+    // public void refreshMazeInfo() {
+    //     mazeRows = czytaczpliku.getHeight();
+    //     mazeCols = czytaczpliku.getWidth();
+    //     mazeprops.setText("Rows: " + mazeRows + " Cols: " + mazeCols);
+    //     startRowField.setText(Integer.toString(startRowValue));
+    //     startColumnField.setText(Integer.toString(startColValue));
+    //     endRowField.setText(Integer.toString(endRowValue));
+    //     endColumnField.setText(Integer.toString(endColValue));
+    //     mazeInfo.revalidate();
+    //     mazeInfo.repaint();
+    // }
 
     public AppGUI() {
-        mazeData = new Maze();
+
+        Observers.MazePanel mazePanel = new Observers.MazePanel();
+        JScrollPane scrollPane = new JScrollPane(mazePanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        
+        
+        //Stworzenie obiektu mazeInfo()
+        //Stworzenie obiektu mazeMessages()
+
+
+        //Dodaj do center panel centerPanel.add(mazepanel.scrollPane)
+
 
         mazeMessages = new JPanel(new FlowLayout());
         mazeMessages.setBackground(new Color(0x000C18));
@@ -203,9 +130,7 @@ public class AppGUI extends JFrame {
         messageLabel.setFont(largeFont);
 
         messages.add("Welcome to our Program!");
-        printMessageToGui();
         messages.add("Please load a Maze!");
-        printMessageToGui();
 
         JFrame frame = new JFrame("Maze Solver");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -214,19 +139,29 @@ public class AppGUI extends JFrame {
         frame.getContentPane().setBackground(Color.LIGHT_GRAY);
         frame.setLayout(new BorderLayout());
 
+
+
+
+        //tu może się rozwalić przez scroll panele
         centerPanel = new JPanel(new BorderLayout());
         centerPanel.setBackground(Color.LIGHT_GRAY);
+        centerPanel.add(scrollPane);
 
-        JScrollPane scrollPane = new JScrollPane(centerPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        frame.add(scrollPane, BorderLayout.CENTER);
+        frame.add(centerPanel, BorderLayout.CENTER);
 
-        JButton drawMazeButton = new JButton("Wczytaj Labirynt");
-        drawMazeButton.setFont(new Font("Arial", Font.BOLD, 20));
-        drawMazeButton.setPreferredSize(new Dimension(300, 40));
-        drawMazeButton.setBackground(new Color(0x000C18));
-        drawMazeButton.setForeground(Color.WHITE);
-        drawMazeButton.setMargin(new Insets(0, 10, 0, 0));
-        drawMazeButton.addActionListener(e -> {
+
+
+
+
+        JButton loadMazeButton = new JButton("Wczytaj Labirynt");
+        loadMazeButton.setFont(new Font("Arial", Font.BOLD, 20));
+        loadMazeButton.setPreferredSize(new Dimension(300, 40));
+        loadMazeButton.setBackground(new Color(0x000C18));
+        loadMazeButton.setForeground(Color.WHITE);
+        loadMazeButton.setMargin(new Insets(0, 10, 0, 0));
+
+        //Po naciśnięciu na przycisk
+        loadMazeButton.addActionListener(e -> {
             JFileChooser filechooser = new JFileChooser();
             filechooser.setCurrentDirectory(new File("C:\\Users\\"));
 
@@ -234,20 +169,24 @@ public class AppGUI extends JFrame {
 
             if (result == JFileChooser.APPROVE_OPTION) {
                 selectedFile = filechooser.getSelectedFile().getAbsolutePath();
-                try {
-                    czytaczpliku = new FileRead();
-                    messages.add("Maze Loaded Successfully!");
-                    printMessageToGui();
-                    maze = czytaczpliku.wczytajLabirynt(selectedFile);
-                    createMaze(CELLSIZE, maze);
-                    refreshMazeInfo();
+                try 
+                {
+                    maze = new Maze();
+                    Maze.LoadMaze mazeLoader = maze.new LoadMaze();
+                    mazeLoader.loadMaze(selectedFile, mazePanel);
+
                     SelectPosinMaze.setEnabled(true);
                 } catch (IOException exception) {
                     messages.add("Something went wrong while reading the text file!");
-                    printMessageToGui();
                 }
             }
         });
+
+
+
+
+
+
 
         SolveMazeButton = new JButton("Rozwiaz Labirynt!");
         SolveMazeButton.setFont(new Font("Arial", Font.BOLD, 20));
@@ -265,14 +204,12 @@ public class AppGUI extends JFrame {
 
         SelectPosinMaze.addActionListener(e -> {
            
-            mazeData.maze[startRowValue][startColValue] = ' ';
-            mazeData.maze[endRowValue][endColValue] = ' ';
-            clickMode = 1;
-            updateMazeImage();
-            mazeChanged();
-            messages.add("Picking Start and finish...");
-            mazeMessages.removeAll();
-            printMessageToGui();
+            mazePanel.resetMazeArray();
+            // updateMazeImage();
+            // mazeChanged();
+            // messages.add("Picking Start and finish...");
+            // mazeMessages.removeAll();
+            // printMessageToGui();
             
         });
 
@@ -280,7 +217,7 @@ public class AppGUI extends JFrame {
         setupPanel.setBorder(new EmptyBorder(DEFAULTHEIGHT / 30, DEFAULTWIDTH / 30, DEFAULTHEIGHT / 30, DEFAULTWIDTH / 30));
         setupPanel.setBackground(new Color(0x003BAE));
         setupPanel.add(SolveMazeButton, BorderLayout.CENTER);
-        setupPanel.add(drawMazeButton, BorderLayout.WEST);
+        setupPanel.add(loadMazeButton, BorderLayout.WEST);
         setupPanel.add(SelectPosinMaze, BorderLayout.EAST);
 
         setupPanel.setPreferredSize(new Dimension(DEFAULTWIDTH - DEFAULTWIDTH / 6, DEFAULTHEIGHT / 8));
@@ -406,6 +343,10 @@ public class AppGUI extends JFrame {
         sidePanel.add(scrollPanelMessages, BorderLayout.SOUTH);
 
         frame.setVisible(true);
+
+
+
+
     }
 
     public static void main(String[] args) {
