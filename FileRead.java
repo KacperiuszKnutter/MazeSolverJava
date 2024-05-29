@@ -1,12 +1,16 @@
 import java.io.*;
 import java.util.Scanner;
 public class FileRead {
+
+
     private static int width;
     private static int height;
     private int startX;
     private int startY;
     private int endX;
     private int endY;
+
+
     public FileRead() {
         this.width = 0;
         this.height = 0;
@@ -47,82 +51,15 @@ public class FileRead {
         endX = x;
         endY = y;
     }
-    public void read(String in) throws IOException {
-        int x = 0;
-        int y = 0;
-        int maxWidth = 0;
-        int currentChar;
-        int iter=0;
-        String jakikolwiek = "";
 
-        try 
+   
+    public static char[][] wczytajLabirynt (String sciezkaDoPliku) throws IOException
+    {
+        try (BufferedReader brCount = new BufferedReader(new FileReader(sciezkaDoPliku))) 
         {
-            Scanner scaner=new Scanner(new File(in));
-            while (scaner.hasNext()) {
-                String line=scaner.nextLine();
-                x=0;
-                y++;
-                width = line.length() + 1;
-                for(char c:line.toCharArray()){
-                    iter++;
-                switch (c) {
-                    case 'P':
-                    jakikolwiek+=c;
-
-                        startX = x;
-                        
-                        startY = y;
-                        
-                        x++;
-                        break;
-                    case 'K':
-                    jakikolwiek+=c;
-
-                        endX = x;
-                        endY = y;
-                        x++;
-                        break;
-                    
-                    case 'X':
-                    jakikolwiek+=c;
-
-                        x++;
-                        break;
-                    case ' ':
-                    jakikolwiek+=c;
-        
-                        x++;
-                        break;
-                    default:
-                
-                    System.exit(1);
-                }
-
-                }
-                
-            }
-        }
-        catch (IOException e) 
-        {
-                System.out.println("Failed to read file: ");
-                e.printStackTrace();
-        }
-        height = y+1; 
-    }
-
-    public static void markVisited(char[][] lab , int x, int y){
-        lab[y][x] = '+';
-    }
-    public static void markPath(char[][] lab , int x, int y){
-        lab[y][x] = 'O';
-    }
-    public static boolean isInvalidPosition(char[][] lab , int x, int y) {
-        return (lab[y][x] == '+' || lab[y][x] == 'X');
-    }
-    public static char[][] wczytajLabirynt (String sciezkaDoPliku) throws IOException{
-        try (BufferedReader brCount = new BufferedReader(new FileReader(sciezkaDoPliku))) {
             int liczbaWierszy = 0;
             int liczbaKolumn = 0;
+
             // Pobierz liczbę wierszy i kolumn labiryntu
             while (brCount.readLine() != null) {
                 liczbaWierszy++;
@@ -135,11 +72,14 @@ public class FileRead {
             if ((linia = brRead.readLine()) != null) {
                 liczbaKolumn = linia.length();
             }
+            brRead.close();
+
             // Utwórz dwuwymiarową tablicę na podstawie rozmiaru labiryntu
             char[][] labirynt = new char[liczbaWierszy][liczbaKolumn];
+
             // Wczytaj labirynt z pliku
             int wiersz = 0;
-            brRead.close();
+            
             brRead = new BufferedReader(new FileReader(sciezkaDoPliku));
             while ((linia = brRead.readLine()) != null) {
                 for (int kolumna = 0; kolumna < liczbaKolumn; kolumna++) {
@@ -157,7 +97,7 @@ public class FileRead {
             return null;
         }
     }
-    public static void print(char[][] lab){
+    public static void printMaze(char[][] lab){
         for(int i=0; i <lab.length; i++){
             for(int j = 0; j< lab[i].length; j++){
                 System.out.print(lab[i][j]);

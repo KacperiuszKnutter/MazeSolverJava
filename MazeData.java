@@ -15,6 +15,35 @@ public class MazeData {
     private int mazeEndRow;
     private int mazeEndCol;
 
+    private int enableSolveMaze;
+    private int enableSelectPosin;
+
+
+
+    private ArrayList<String> messages;
+
+
+
+    // Gettery i Settery dla messages
+    public ArrayList<String> getMessages() {
+        return new ArrayList<>(messages); 
+    }
+
+
+
+    public void setMessages(ArrayList<String> messages) {
+        this.messages = new ArrayList<>(messages); 
+    }
+
+    public void addMessage(String message) {
+        this.messages.add(message);
+    }
+
+    public void clearMessages() {
+        this.messages.clear();
+    }
+
+
 
     public void updateMaze(int Rows, int Cols, int CellSize, char [][] mazearr) {
         this.rows = Rows;
@@ -70,6 +99,17 @@ public class MazeData {
         this.maze[endRowValue][endColValue] = ' ';
     }
 
+    public void setMazeElement(int elRow, int elCol, char elValue)
+    {
+        this.maze[elRow][elCol] = elValue;
+    }
+
+    public char getMazeElement(int elRow, int elCol)
+    {
+        return this.maze[elRow][elCol];
+    }
+
+
 
     
     // Setters and Getters
@@ -105,9 +145,90 @@ public class MazeData {
         this.mazeEndCol = mazeEndCol;
     }
 
+    public void setSolveButtonEnabled(int choice)
+    {
+        this.enableSolveMaze = choice;
+    }
+
+    public void setSelectPosinEnabled(int choice)
+    {
+        this.enableSelectPosin = choice;
+    }
+
+    public boolean isSolveButtonEnabled()
+    {
+        if(this.enableSolveMaze == 0 )
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    public boolean isSelectPosinEnabled()
+    {
+        if(this.enableSelectPosin == 0 )
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+
+
+    public void setPathinMaze(int y, int x)
+    {
+        this.maze[y][x] = 'B' ;//Znak sciezki dowolnie
+    }
+
+    public boolean isGridPathinMaze(int x, int y)
+    {
+        if(this.maze[y][x] == 'B') {
+            return true;
+        }
+        return false;
+    }
+
+    public void setVisitedMaze(int x, int y)
+    {
+        this.maze[y][x] = 'V' ;//Oznaczenie ze odwiedzilismy
+    }
+
+    public boolean isGridVisitedMaze(int x, int y)
+    {
+        if(this.maze[y][x] == 'V') {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isPosAvailable(int x, int y)
+    {
+        if(this.maze[y][x] == ' ' ||this.maze[y][x] == 'P' || this.maze[y][x] == 'K' ) {
+            return true;
+        }
+        return false;
+    }
     
     public MazeData() {
 
+        this.rows = 0;
+        this.cols = 0;
+        this.cellSize = 10;
+        this.mazeStartRow = 0;
+        this.mazeStartCol = 0;
+        this.mazeEndRow = 0;
+        this.mazeEndCol = 0;
+        this.messages = new ArrayList<>();
+        this.messages.add("Welcome to our Program!");
+        this.messages.add("Please load a Maze!");
+        this.enableSolveMaze = 0;
+        this.enableSelectPosin = 0;
     }
 
 }
