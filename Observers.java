@@ -486,6 +486,8 @@ public class Observers {
         public JButton SelectPosinMaze;
         public JButton SolveMazeButton;
         private JButton loadMazeButton;
+        private JButton ClearMazeButton;
+        private JButton SaveMazeButton;
         public Font largeFont = new Font("Arial", Font.BOLD, 30);
         public Font mediumFont = new Font("Arial", Font.BOLD, 18);
         public Font smallFont = new Font("Arial", Font.BOLD, 12);
@@ -512,7 +514,7 @@ public class Observers {
             //Przycisk wczytania labiryntu z pliku
             loadMazeButton = new JButton("Wczytaj Labirynt");
             loadMazeButton.setFont(new Font("Arial", Font.BOLD, 20));
-            loadMazeButton.setPreferredSize(new Dimension(300, 40));
+            loadMazeButton.setPreferredSize(new Dimension(300, 60));
             loadMazeButton.setBackground(new Color(0x000C18));
             loadMazeButton.setForeground(Color.WHITE);
             loadMazeButton.setMargin(new Insets(0, 10, 0, 0));
@@ -533,6 +535,7 @@ public class Observers {
                         mazeLoader.addObservers(mazePanel, mazeNavbar, mazeSidePanel);
                         mazeLoader.loadMaze(selectedFile);
 
+
                     } catch (IOException exception) {
                         System.out.println("Something went wrong");
                     }
@@ -552,8 +555,7 @@ public class Observers {
                 maze.mazeData.setSolveButtonEnabled(0);
                 mazeSolver.addObservers(mazePanel, mazeNavbar, mazeSidePanel);
                 mazeSolver.solveMaze();
-                
-
+                //Zmiany
             });
 
 
@@ -574,6 +576,21 @@ public class Observers {
                 
             });
 
+            //Nowy przycisk do czyszczenia labiryntu
+            ClearMazeButton = new JButton("Wyczysc Labirynt!");
+            ClearMazeButton.setFont(new Font("Arial", Font.BOLD, 20));
+            ClearMazeButton.setPreferredSize(new Dimension(300, 60));
+            ClearMazeButton.setBackground(new Color(0x000C18));
+            ClearMazeButton.setForeground(Color.WHITE);
+            ClearMazeButton.setEnabled(false);
+
+            //Nowy przycisk do zapisywania rozwiazania
+            SaveMazeButton = new JButton("Zapisz Rozwiazanie!");
+            SaveMazeButton.setFont(new Font("Arial", Font.BOLD, 20));
+            SaveMazeButton.setPreferredSize(new Dimension(300, 60));
+            SaveMazeButton.setBackground(new Color(0x000C18));
+            SaveMazeButton.setForeground(Color.WHITE);
+            SaveMazeButton.setEnabled(false);
 
             //Navbar  
             setBorder(new EmptyBorder(DEFAULTHEIGHT / 30, DEFAULTWIDTH / 30, DEFAULTHEIGHT / 30, DEFAULTWIDTH / 30));
@@ -582,7 +599,8 @@ public class Observers {
             add(loadMazeButton, BorderLayout.WEST);
             add(SolveMazeButton, BorderLayout.CENTER);
             add(SelectPosinMaze, BorderLayout.EAST);
-            
+            add(ClearMazeButton,BorderLayout.WEST);
+            add(SaveMazeButton,BorderLayout.EAST);
 
 
             SolveMazeButton.setEnabled(mazeData.isSolveButtonEnabled());
@@ -611,9 +629,8 @@ public class Observers {
 
             if(mazeData.isMazeSolved())
             {
-                SolveMazeButton.setEnabled(true);
-                SolveMazeButton.setText("Save Maze");
-                SolveMazeButton.addActionListener(e -> {
+                SaveMazeButton.setEnabled(true);
+                SaveMazeButton.addActionListener(e -> {
                     try
                     {
                         mazeSaver.saveMaze("savedmaze.txt");
@@ -624,8 +641,8 @@ public class Observers {
                     }
                     
                 });
-                SelectPosinMaze.setText("Clear Maze");
-                SelectPosinMaze.addActionListener(e -> {
+                ClearMazeButton.setEnabled(true);
+                ClearMazeButton.addActionListener(e -> {
                     
                     clearAllPanels();
                 
@@ -633,16 +650,8 @@ public class Observers {
             }
             else
             {
-                SolveMazeButton.setText("Rozwiąż Labirynt!");
-
-                SelectPosinMaze.setText("Wybierz Start i Koniec!");
-                SelectPosinMaze.addActionListener(e -> {
-
-                maze.mazeData.setSolveButtonEnabled(0);
-                mazePanel.resetMazeArray();
-                mazeSolver.clearMaze();
-                });
-                
+                SaveMazeButton.setEnabled(false);
+                ClearMazeButton.setEnabled(false);            
             }
             
         
