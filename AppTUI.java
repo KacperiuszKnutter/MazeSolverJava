@@ -1,18 +1,5 @@
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.util.ArrayList;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Reader;
 import java.util.Scanner;
 
 
@@ -158,9 +145,9 @@ public class AppTUI {
 
         maze = new Maze();
         mazeData = maze.mazeData;
+        Scanner newscanner;
+        String selectedFile;
         
-
-
         coordinatesSetter = maze.new CoordinatesSetter();
         mazeLoader = maze.new LoadMaze();
         mazeSolver = maze.new MazeSolver();
@@ -178,12 +165,15 @@ public class AppTUI {
                 case 1:
                     {
                         try {
+                        newscanner = new Scanner(System.in);
+                        System.out.print("Please provide the file name: ");
+                        selectedFile = newscanner.nextLine();
                         System.out.println("Loading Maze...");
-                        mazeLoader.loadMaze("maze-512x256.txt");
+                        mazeLoader.loadMaze(selectedFile);
                         // mazeLoader.printMaze(mazeData.getMaze());
                         
                         } catch (IOException exception) {
-                            System.out.println("Blad");
+                            System.out.println("Maze could not be found");
                         }
 
 

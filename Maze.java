@@ -88,6 +88,7 @@ public class Maze {
         private FileRead czytaczpliku;
         private List<Observer> observers = new ArrayList<>();
         private char[][] maze;
+        private String outputFile;
 
         public LoadMaze() {
         }
@@ -114,7 +115,13 @@ public class Maze {
 
             try {
                 czytaczpliku = new FileRead();
-                maze = czytaczpliku.readMazetxt(selectedFile);
+                if(czytaczpliku.checkExtension(selectedFile) == 1){
+                    maze = czytaczpliku.readMazetxt(selectedFile);
+                }
+                else if(czytaczpliku.checkExtension(selectedFile) == 2){
+                    outputFile = czytaczpliku.binaryRead(selectedFile);
+                    maze = czytaczpliku.readMazetxt(outputFile);
+                }
                 mazeData.setMaze(maze);
                 mazeData.setRows(czytaczpliku.getHeight());
                 mazeData.setCols(czytaczpliku.getWidth());
